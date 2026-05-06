@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="glass-panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1 class="page-title" style="margin-bottom: 0;">Available Games</h1>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search game..." onkeyup="filterTable()" style="padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: #fff; outline: none; width: 250px;">
+        </div>
+    </div>
+    
+    <div class="game-grid" id="gamesGrid">
+        {% for game in games %}
+        <div class="game-card">
+            <img src="{{ game.cover_url if game.cover_url else 'https://via.placeholder.com/90x135/1e293b/e2e8f0?text=No+Cover' }}" alt="Cover" class="game-cover">
+            <div class="game-info">
+                <div class="game-title">{{ game.name }}</div>
+                <div class="game-meta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    Size: {{ game.size }}
+                </div>
+                <div class="game-meta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+                    Genre: {{ game.genre if game.genre else 'Unknown' }}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            No games available in the warehouse yet.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function filterTable() {
+    let input = document.getElementById("searchInput");
+    let filter = input.value.toUpperCase();
+    let grid = document.getElementById("gamesGrid");
+    let cards = grid.getElementsByClassName("game-card");
+    
+    for (let i = 0; i < cards.length; i++) {
+        let titleDiv = cards[i].getElementsByClassName("game-title")[0];
+        if (titleDiv) {
+            let txtValue = titleDiv.textContent || titleDiv.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                cards[i].style.display = "";
+            } else {
+                cards[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+{% endblock %}

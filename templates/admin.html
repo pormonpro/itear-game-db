@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="glass-panel">
+    <h1 class="page-title">Admin Dashboard</h1>
+    
+    <div class="add-form-container">
+        <form method="POST" action="{{ url_for('add_game') }}" id="addGameForm">
+            <div class="form-grid">
+                <div class="form-col-left">
+                    <div class="form-group">
+                        <label for="name">Game Name</label>
+                        <input type="text" id="name" name="name" required placeholder="e.g., Cyberpunk 2077">
+                    </div>
+                    <div class="form-group">
+                        <label for="size">Game Size</label>
+                        <input type="text" id="size" name="size" required placeholder="e.g., 70 GB">
+                    </div>
+                    <div class="form-group">
+                        <label>Genre</label>
+                        <div class="genre-select-container" id="genreSelectContainer">
+                            <div class="genre-pills" id="genrePills"></div>
+                            <div class="dropdown-trigger" id="dropdownTrigger">
+                                <span>Select Genres <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+                            </div>
+                            <div class="dropdown-menu" id="dropdownMenu">
+                                <div class="dropdown-search">
+                                    <input type="text" id="genreDropdownSearch" placeholder="Search genres..." onclick="event.stopPropagation()">
+                                </div>
+                                <div id="dropdownItemsList"></div>
+                            </div>
+                            <input type="hidden" name="genres" id="genresHidden">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-col-right">
+                    <div class="form-group upload-group">
+                        <label for="cover_url">Cover Image URL</label>
+                        <div class="upload-zone" id="coverUrlZone">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            <input type="text" id="cover_url" name="cover_url" placeholder="Paste image URL here..." style="width: 90%; text-align: center; background: transparent; border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.5rem; color: #fff;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: right; margin-bottom: 2rem;">
+                <button type="submit" class="btn btn-primary btn-glow">Add Game</button>
+            </div>
+        </form>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 style="font-size: 1.2rem; font-weight: 500; color: #fff;">Game Database</h2>
+        <div class="search-box">
+            <input type="text" id="searchInputAdmin" placeholder="Search game..." onkeyup="filterAdminTable()" style="padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: #fff; outline: none; width: 250px;">
+        </div>
+    </div>
+
+    <div class="game-grid" id="adminGamesGrid">
+        {% for game in games %}
+        <div class="game-card">
+            <img src="{{ game.cover_url if game.cover_url else 'https://via.placeholder.com/90x135/1e293b/e2e8f0?text=No+Cover' }}" alt="Cover" class="game-cover">
+            <div class="game-info">
+                <div class="game-title">{{ game.name }}</div>
+                <div class="game-meta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    Size: {{ game.size }}
+                </div>
+                <div class="game-meta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+                    Genre: {{ game.genre if game.genre else 'Unknown' }}
+                </div>
+                <div class="game-actions">
+                    <a href="{{ url_for('delete_game', id=game.id) }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this game?');">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            No games available. Add one above!
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function filterAdminTable() {
+    let input = document.getElementById("searchInputAdmin");
+    let filter = input.value.toUpperCase();
+    let grid = document.getElementById("adminGamesGrid");
+    let cards = grid.getElementsByClassName("game-card");
+    
+    for (let i = 0; i < cards.length; i++) {
+        let titleDiv = cards[i].getElementsByClassName("game-title")[0];
+        if (titleDiv) {
+            let txtValue = titleDiv.textContent || titleDiv.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                cards[i].style.display = "";
+            } else {
+                cards[i].style.display = "none";
+            }
+        }       
+    }
+}
+
+// Genre Pills Logic
+const genrePillsContainer = document.getElementById('genrePills');
+const genresHidden = document.getElementById('genresHidden');
+const dropdownMenu = document.getElementById('dropdownMenu');
+const dropdownItemsList = document.getElementById('dropdownItemsList');
+const dropdownTrigger = document.getElementById('dropdownTrigger');
+const genreSelectContainer = document.getElementById('genreSelectContainer');
+const genreDropdownSearch = document.getElementById('genreDropdownSearch');
+let genres = [];
+
+const availableGenres = ["Action", "Adventure", "RPG", "Strategy", "Simulation", "Sports", "Racing", "Horror", "Puzzle", "FPS", "Turn-Base", "MOBA", "Survival", "Battle Royale", "Sandbox", "Role-Play", "MMORPG", "RTS"];
+
+if (dropdownItemsList) {
+    availableGenres.forEach(g => {
+        const div = document.createElement('div');
+        div.className = 'dropdown-item';
+        div.textContent = g;
+        div.onclick = (e) => {
+            e.stopPropagation();
+            if (!genres.includes(g)) {
+                genres.push(g);
+                renderPills();
+            }
+            genreDropdownSearch.value = '';
+            filterDropdown('');
+        };
+        dropdownItemsList.appendChild(div);
+    });
+
+    dropdownTrigger.onclick = (e) => {
+        e.stopPropagation();
+        dropdownMenu.classList.toggle('show');
+        if(dropdownMenu.classList.contains('show')) {
+            genreDropdownSearch.focus();
+        }
+    };
+
+    genreDropdownSearch.addEventListener('keyup', (e) => {
+        filterDropdown(e.target.value.toUpperCase());
+    });
+
+    function filterDropdown(filterText) {
+        const items = dropdownItemsList.getElementsByClassName('dropdown-item');
+        for (let i = 0; i < items.length; i++) {
+            let txtValue = items[i].textContent || items[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filterText) > -1) {
+                items[i].style.display = "";
+            } else {
+                items[i].style.display = "none";
+            }
+        }
+    }
+
+    document.addEventListener('click', (e) => {
+        if (!genreSelectContainer.contains(e.target)) {
+            dropdownMenu.classList.remove('show');
+        }
+    });
+}
+
+function renderPills() {
+    genrePillsContainer.innerHTML = '';
+    genres.forEach((genre, index) => {
+        const pill = document.createElement('div');
+        pill.className = 'pill';
+        pill.innerHTML = `${genre} <span class="pill-remove" onclick="removeGenre(event, ${index})">&times;</span>`;
+        genrePillsContainer.appendChild(pill);
+    });
+    genresHidden.value = genres.join(', ');
+
+    if (dropdownItemsList) {
+        Array.from(dropdownItemsList.children).forEach(item => {
+            if (genres.includes(item.textContent)) {
+                item.classList.add('selected');
+            } else {
+                item.classList.remove('selected');
+            }
+        });
+    }
+}
+
+function removeGenre(e, index) {
+    e.stopPropagation();
+    genres.splice(index, 1);
+    renderPills();
+}
+</script>
+{% endblock %}

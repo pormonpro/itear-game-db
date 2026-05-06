@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gudang Game DB</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="{{ url_for('index') }}" class="logo">
+                <div class="logo-box">iTear</div>
+                <div class="logo-text">iTear e<span>Shop</span></div>
+            </a>
+        </div>
+        <nav class="nav-links">
+            <div class="control-panel">
+                {% if session.get('logged_in') %}
+                    <a href="{{ url_for('admin') }}" class="btn btn-dark">Admin Panel</a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-logout">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-dark" style="display: inline-flex; align-items: center;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+                        Admin Login
+                    </a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    <div class="hero-section">
+        <h1 class="hero-title">iTearGame: Katalog Referensi Premium Nintendo Switch</h1>
+        <p class="hero-subtitle">Jelajahi Etalase Kurasi Digital Eksklusif Kami Untuk Menemukan Koleksi Game Nintendo Switch Terbaik. Dapatkan Panduan Lengkap Dan Referensi Mendalam Untuk Memastikan Anda Memilih Pengalaman Bermain Yang Paling Sesuai Dengan Preferensi Anda, Semua Tersedia Untuk Penjelajahan Langsung Dari iTearGame.</p>
+    </div>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
