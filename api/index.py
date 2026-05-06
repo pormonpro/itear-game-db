@@ -14,10 +14,10 @@ app = Flask(__name__,
 
 app.secret_key = os.environ.get('SECRET_KEY', 'itear-eshop-secret-2024')
 
-DATABASE_URL = (os.environ.get('DATABASE_URL') or 
-               os.environ.get('POSTGRES_URL') or 
-               os.environ.get('SUPABASE_DB_URL') or 
-               os.environ.get('POSTGRES_URL_NON_POOLING') or '')
+DATABASE_URL = (os.environ.get('iteargamedb_POSTGRES_URL') or 
+               os.environ.get('iteargamedb_POSTGRES_URL_NON_POOLING') or
+               os.environ.get('DATABASE_URL') or 
+               os.environ.get('POSTGRES_URL') or '')
 ADMIN_ID = os.environ.get('ADMIN_ID', 'Admin')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'zidan001')
 
