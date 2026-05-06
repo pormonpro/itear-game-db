@@ -4,9 +4,13 @@ from psycopg2.extras import RealDictCursor
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session
 
+# Resolve paths relative to this file
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 app = Flask(__name__,
-    template_folder=os.path.join(os.path.dirname(__file__), '..', 'templates'),
-    static_folder=os.path.join(os.path.dirname(__file__), '..', 'static'))
+    template_folder=os.path.join(BASE_DIR, 'templates'),
+    static_folder=os.path.join(BASE_DIR, 'static'),
+    static_url_path='/static')
 
 app.secret_key = os.environ.get('SECRET_KEY', 'itear-eshop-secret-2024')
 
@@ -21,19 +25,22 @@ def get_db():
 
 
 def init_db():
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS games (
-            id SERIAL PRIMARY KEY,
-            name TEXT NOT NULL,
-            size TEXT NOT NULL,
-            cover_url TEXT,
-            genre TEXT
-        )
-    ''')
-    conn.commit()
-    conn.close()
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS games (
+                id SERIAL PRIMARY KEY,
+                name TEXT NOT NULL,
+                size TEXT NOT NULL,
+                cover_url TEXT,
+                genre TEXT
+            )
+        ''')
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"DB init error: {e}")
 
 
 # Require login decorator
@@ -48,13 +55,16 @@ def login_required(f):
 
 @app.route('/')
 def index():
-    init_db()
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM games ORDER BY name ASC')
-    games = cursor.fetchall()
-    conn.close()
-    return render_template('index.html', games=games)
+    try:
+        init_db()
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM games ORDER BY name ASC')
+        games = cursor.fetchall()
+        conn.close()
+        return render_template('index.html', games=games)
+    except Exception as e:
+        return f"Database connection error: {e}", 500
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -78,13 +88,16 @@ def logout():
 @app.route('/admin')
 @login_required
 def admin():
-    init_db()
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM games ORDER BY name ASC')
-    games = cursor.fetchall()
-    conn.close()
-    return render_template('admin.html', games=games)
+    try:
+        init_db()
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM games ORDER BY name ASC')
+        games = cursor.fetchall()
+        conn.close()
+        return render_template('admin.html', games=games)
+    except Exception as e:
+        return f"Database connection error: {e}", 500
 
 
 @app.route('/admin/add', methods=['POST'])
