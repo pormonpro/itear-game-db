@@ -19,20 +19,17 @@ ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'zidan001')
 
 
 def get_db():
-    # Build connection from individual Supabase integration vars
-    host = os.environ.get('iteargamedb_POSTGRES_HOST', '')
-    user = os.environ.get('iteargamedb_POSTGRES_USER', 'postgres')
-    password = os.environ.get('iteargamedb_POSTGRES_PASSWORD', '')
-    database = os.environ.get('iteargamedb_POSTGRES_DATABASE', 'postgres')
+    # Use pooled URL from Supabase integration, strip incompatible query params
+    url = (os.environ.get('iteargamedb_POSTGRES_URL') or 
+           os.environ.get('iteargamedb_POSTGRES_PRISMA_URL') or '')
+    # Remove query parameters that psycopg2 doesn't understand
+    if '?' in url:
+        url = url.split('?')[0]
+    # Fix protocol if needed (postgres:// -> postgresql://)
+    if url.startswith('postgres://'):
+        url = 'postgresql://' + url[len('postgres://'):]
     
-    conn = psycopg2.connect(
-        host=host,
-        user=user,
-        password=password,
-        dbname=database,
-        port=5432,
-        cursor_factory=RealDictCursor
-    )
+    conn = psycopg2.connect(url, cursor_factory=RealDictCursor)
     return conn
 
 
@@ -76,8 +73,8 @@ def index():
         conn.close()
         return render_template('index.html', games=games)
     except Exception as e:
-        host = os.environ.get('iteargamedb_POSTGRES_HOST', 'NOT SET')
-        return f"Database connection error: {e}<br><br>Host: {host}", 500
+        raw_url = os.environ.get('iteargamedb_POSTGRES_URL', 'NOT SET')
+        return f"Database connection error: {e}<br><br>Raw URL prefix: {raw_url[:60]}...", 500
 
 
 @app.route('/login', methods=['GET', 'POST'])
