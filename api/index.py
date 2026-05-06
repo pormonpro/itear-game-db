@@ -67,7 +67,10 @@ def index():
         conn.close()
         return render_template('index.html', games=games)
     except Exception as e:
-        return f"Database connection error: {e}", 500
+        # Show helpful debug info
+        db_vars = {k: v[:20] + '...' for k, v in os.environ.items() 
+                   if any(x in k.upper() for x in ['DATABASE', 'POSTGRES', 'SUPABASE', 'DB_URL', 'PG'])}
+        return f"Database connection error: {e}<br><br>Available DB env vars: {db_vars}<br><br>DATABASE_URL value: '{DATABASE_URL[:30]}...' " if DATABASE_URL else f"Database connection error: {e}<br><br>Available DB env vars: {db_vars}<br><br>DATABASE_URL is EMPTY - no matching env var found!", 500
 
 
 @app.route('/login', methods=['GET', 'POST'])
