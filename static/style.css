@@ -133,6 +133,85 @@ header {
     letter-spacing: 0.2px;
 }
 
+/* Hero Link Buttons */
+.hero-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.hero-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1.6rem;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-link-btn svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: transform 0.35s ease;
+}
+
+.hero-link-btn:hover {
+    transform: translateY(-3px) scale(1.04);
+}
+
+.hero-link-btn:hover svg {
+    transform: scale(1.15);
+}
+
+/* WhatsApp */
+.hero-link-btn.whatsapp {
+    border-color: rgba(37, 211, 102, 0.3);
+    box-shadow: 0 0 15px rgba(37, 211, 102, 0.1);
+}
+.hero-link-btn.whatsapp:hover {
+    background: rgba(37, 211, 102, 0.15);
+    border-color: rgba(37, 211, 102, 0.6);
+    box-shadow: 0 0 25px rgba(37, 211, 102, 0.35), 0 8px 20px rgba(0,0,0,0.3);
+    color: #25d366;
+}
+
+/* Shopee */
+.hero-link-btn.shopee {
+    border-color: rgba(238, 77, 45, 0.3);
+    box-shadow: 0 0 15px rgba(238, 77, 45, 0.1);
+}
+.hero-link-btn.shopee:hover {
+    background: rgba(238, 77, 45, 0.15);
+    border-color: rgba(238, 77, 45, 0.6);
+    box-shadow: 0 0 25px rgba(238, 77, 45, 0.35), 0 8px 20px rgba(0,0,0,0.3);
+    color: #ee4d2d;
+}
+
+/* Website */
+.hero-link-btn.website {
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.1);
+}
+.hero-link-btn.website:hover {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.6);
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.35), 0 8px 20px rgba(0,0,0,0.3);
+    color: #818cf8;
+}
+
 .nav-links a {
     color: var(--text-muted);
     text-decoration: none;
