@@ -14,16 +14,25 @@ app = Flask(__name__,
 
 app.secret_key = os.environ.get('SECRET_KEY', 'itear-eshop-secret-2024')
 
-DATABASE_URL = (os.environ.get('iteargamedb_POSTGRES_URL') or 
-               os.environ.get('iteargamedb_POSTGRES_URL_NON_POOLING') or
-               os.environ.get('DATABASE_URL') or 
-               os.environ.get('POSTGRES_URL') or '')
 ADMIN_ID = os.environ.get('ADMIN_ID', 'Admin')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'zidan001')
 
 
 def get_db():
-    conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+    # Build connection from individual Supabase integration vars
+    host = os.environ.get('iteargamedb_POSTGRES_HOST', '')
+    user = os.environ.get('iteargamedb_POSTGRES_USER', 'postgres')
+    password = os.environ.get('iteargamedb_POSTGRES_PASSWORD', '')
+    database = os.environ.get('iteargamedb_POSTGRES_DATABASE', 'postgres')
+    
+    conn = psycopg2.connect(
+        host=host,
+        user=user,
+        password=password,
+        dbname=database,
+        port=5432,
+        cursor_factory=RealDictCursor
+    )
     return conn
 
 
@@ -67,10 +76,8 @@ def index():
         conn.close()
         return render_template('index.html', games=games)
     except Exception as e:
-        # Show helpful debug info
-        db_vars = {k: v[:20] + '...' for k, v in os.environ.items() 
-                   if any(x in k.upper() for x in ['DATABASE', 'POSTGRES', 'SUPABASE', 'DB_URL', 'PG'])}
-        return f"Database connection error: {e}<br><br>Available DB env vars: {db_vars}<br><br>DATABASE_URL value: '{DATABASE_URL[:30]}...' " if DATABASE_URL else f"Database connection error: {e}<br><br>Available DB env vars: {db_vars}<br><br>DATABASE_URL is EMPTY - no matching env var found!", 500
+        host = os.environ.get('iteargamedb_POSTGRES_HOST', 'NOT SET')
+        return f"Database connection error: {e}<br><br>Host: {host}", 500
 
 
 @app.route('/login', methods=['GET', 'POST'])
