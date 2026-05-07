@@ -354,6 +354,8 @@ main {
     color: #fff;
     margin-bottom: 1rem;
     line-height: 1.3;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .game-meta {
@@ -715,11 +717,13 @@ footer {
     background: rgba(0, 0, 0, 0.6);
     z-index: 149;
     opacity: 0;
+    pointer-events: none;
     transition: opacity 0.3s ease;
 }
 
 .mobile-overlay.active {
     opacity: 1;
+    pointer-events: auto;
 }
 
 /* =======================================
