@@ -20,6 +20,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
@@ -28,6 +29,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
     background-image: 
         radial-gradient(ellipse at 20% 40%, rgba(59, 130, 246, 0.2), transparent 40%),
         radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.25), transparent 40%),
