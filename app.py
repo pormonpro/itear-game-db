@@ -116,6 +116,38 @@ def delete_game(id):
     db.commit()
     return redirect(url_for('admin'))
 
+@app.route('/admin/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_game(id):
+    db = get_db()
+    cursor = db.cursor()
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        size = request.form.get('size')
+        genre = request.form.get('genres', '')
+        cover_url = request.form.get('cover_url', '')
+        
+        if 'cover_image' in request.files:
+            file = request.files['cover_image']
+            if file and file.filename != '':
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(filepath)
+                cover_url = url_for('static', filename='uploads/' + filename)
+
+        if name and size:
+            cursor.execute('UPDATE games SET name=?, size=?, cover_url=?, genre=? WHERE id=?', (name, size, cover_url, genre, id))
+            db.commit()
+            return redirect(url_for('admin'))
+            
+    cursor.execute('SELECT * FROM games WHERE id = ?', (id,))
+    game = cursor.fetchone()
+    if not game:
+        return redirect(url_for('admin'))
+        
+    return render_template('edit.html', game=game)
+
 if __name__ == '__main__':
     if not os.path.exists(DATABASE):
         init_db()

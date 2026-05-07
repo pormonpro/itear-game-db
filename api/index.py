@@ -137,3 +137,31 @@ def delete_game(id):
     conn.commit()
     conn.close()
     return redirect(url_for('admin'))
+
+@app.route('/admin/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_game(id):
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        size = request.form.get('size')
+        genre = request.form.get('genres', '')
+        cover_url = request.form.get('cover_url', '')
+
+        if name and size:
+            cursor.execute('UPDATE games SET name=%s, size=%s, cover_url=%s, genre=%s WHERE id=%s', 
+                           (name, size, cover_url, genre, id))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('admin'))
+            
+    cursor.execute('SELECT * FROM games WHERE id = %s', (id,))
+    game = cursor.fetchone()
+    if not game:
+        conn.close()
+        return redirect(url_for('admin'))
+        
+    conn.close()
+    return render_template('edit.html', game=game)
