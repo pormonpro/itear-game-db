@@ -65,27 +65,7 @@ header {
     gap: 0.8rem;
 }
 
-.logo-box {
-    background: #fff;
-    color: #000;
-    font-weight: 800;
-    padding: 0.4rem 0.8rem;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    letter-spacing: -0.5px;
-}
 
-.logo-text {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: 0.5px;
-}
-
-.logo-text span {
-    color: var(--accent-blue);
-    text-shadow: 0 0 15px var(--accent-blue-glow);
-}
 
 .control-panel {
     display: flex;
@@ -918,7 +898,7 @@ footer {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
-    z-index: 149;
+    z-index: 99;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
@@ -1220,14 +1200,7 @@ footer {
         padding: 0.8rem 3%;
     }
 
-    .logo-box {
-        font-size: 0.95rem;
-        padding: 0.3rem 0.6rem;
-    }
 
-    .logo-text {
-        font-size: 1.2rem;
-    }
 
     .hero-section {
         padding: 2rem 4% 1.2rem;

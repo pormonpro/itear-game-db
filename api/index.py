@@ -12,7 +12,7 @@ app = Flask(__name__,
     static_folder=os.path.join(BASE_DIR, 'static'),
     static_url_path='/static')
 
-app.secret_key = os.environ.get('SECRET_KEY', 'itear-eshop-secret-2024')
+app.secret_key = os.environ.get('SECRET_KEY', 'evory-eshop-secret-2024')
 
 ADMIN_ID = os.environ.get('ADMIN_ID', 'Admin')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'zidan001')
@@ -20,8 +20,8 @@ ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'zidan001')
 
 def get_db():
     # Use pooled URL from Supabase integration, strip incompatible query params
-    url = (os.environ.get('iteargamedb_POSTGRES_URL') or 
-           os.environ.get('iteargamedb_POSTGRES_PRISMA_URL') or '')
+    url = (os.environ.get('evorydb_POSTGRES_URL') or 
+           os.environ.get('evorydb_POSTGRES_PRISMA_URL') or '')
     # Remove query parameters that psycopg2 doesn't understand
     if '?' in url:
         url = url.split('?')[0]
@@ -73,7 +73,7 @@ def index():
         conn.close()
         return render_template('index.html', games=games)
     except Exception as e:
-        raw_url = os.environ.get('iteargamedb_POSTGRES_URL', 'NOT SET')
+        raw_url = os.environ.get('evorydb_POSTGRES_URL', 'NOT SET')
         return f"Database connection error: {e}<br><br>Raw URL prefix: {raw_url[:60]}...", 500
 
 
